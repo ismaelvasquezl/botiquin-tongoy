@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{padding-block:env(safe-area-inset-top,0px) env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Botiquín Tongoy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Nunito:wght@700;800;900&display=swap">
+<style>
+/* Layout: conversación en una columna, saludo cálido arriba, temas como tarjetas grandes con ícono, ayuda urgente siempre a un toque */
+:root{
+  --bg:#F3F8F5;          /* verde agua muy suave: calma */
+  --bg-2:#E4F1EA;
+  --surface:#FFFFFF;
+  --ink:#1D3A36;         /* verde profundo en vez de negro: menos frío */
+  --muted:#5A726D;
+  --line:#D5E6DD;
+  --primary:#1E7263;     /* verde mar: confianza y salud */
+  --primary-ink:#FFFFFF;
+  --primary-soft:#D9EFE6;
+  --sun:#F4B740;         /* sol de la bahía: calidez, atención amable */
+  --sun-soft:#FFF1D2;
+  --urgent:#C8372D;
+  --urgent-soft:#FDECEA;
+  --shadow:0 1px 2px rgba(29,58,54,.06),0 6px 18px rgba(29,58,54,.07);
+  --display:"Nunito","Segoe UI",system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
+  --fs:18px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F1D1B;--bg-2:#15302B;--surface:#172925;--ink:#E3F1EC;--muted:#9FBAB2;--line:#28443E;
+  --primary:#5FC7B0;--primary-ink:#0B1F1B;--primary-soft:#1B3D36;--sun:#F6C35E;--sun-soft:#3A2F16;
+  --urgent:#FF8A7E;--urgent-soft:#3B1C19;--shadow:0 1px 2px rgba(0,0,0,.3);color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1D1B;--bg-2:#15302B;--surface:#172925;--ink:#E3F1EC;--muted:#9FBAB2;--line:#28443E;
+  --primary:#5FC7B0;--primary-ink:#0B1F1B;--primary-soft:#1B3D36;--sun:#F6C35E;--sun-soft:#3A2F16;
+  --urgent:#FF8A7E;--urgent-soft:#3B1C19;--shadow:0 1px 2px rgba(0,0,0,.3);color-scheme:dark}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font:400 var(--fs)/1.6 var(--body)}
+.wrap{max-width:760px;margin:0 auto;padding-inline:16px;display:flex;flex-direction:column;min-height:100%}
+
+/* barra superior */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:6;background:var(--bg);margin-inline:-16px;padding:10px 16px;
+  display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;min-width:0;flex:1}
+.brand b{font-family:var(--display);font-weight:900;font-size:17px;line-height:1.15}
+.brand small{display:block;color:var(--muted);font-size:13px}
+.sizer{display:flex;border:1.5px solid var(--line);border-radius:999px;overflow:hidden;flex-shrink:0}
+.sizer button{font:700 15px var(--display);background:var(--surface);color:var(--ink);border:0;padding:6px 10px;cursor:pointer;min-width:38px}
+.sizer button[aria-pressed="true"]{background:var(--primary);color:var(--primary-ink)}
+.sos-btn{font:800 15px var(--display);background:var(--urgent);color:#fff;border:0;border-radius:999px;padding:8px 14px;cursor:pointer;flex-shrink:0}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .sos-btn{color:#240805}}
+:root[data-theme="dark"] .sos-btn{color:#240805}
+
+/* saludo */
+.hello{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;padding-block:26px 8px}
+.hello h1{font-family:var(--display);font-weight:900;font-size:clamp(28px,6vw,40px);line-height:1.1;margin:0 0 6px;text-wrap:balance}
+.hello p{margin:0;color:var(--muted);max-width:52ch}
+.avatar{width:64px;height:64px;flex-shrink:0}
+.avatar.sm{width:34px;height:34px}
+
+/* ¿dónde te atiendes? */
+.where{margin-block:14px 6px}
+.where h2,.topics h2{font-family:var(--display);font-size:16px;font-weight:800;margin:0 0 8px;color:var(--muted)}
+.places{display:flex;flex-wrap:wrap;gap:8px}
+.places button{font:700 16px var(--body);border:2px solid var(--line);background:var(--surface);color:var(--ink);
+  padding:8px 14px;border-radius:999px;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.places button[aria-pressed="true"]{border-color:var(--primary);background:var(--primary-soft)}
+.places button[aria-pressed="true"]::before{content:"✓";color:var(--primary);font-weight:700}
+
+/* temas */
+.topics{margin-block:18px 4px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.card{display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:center;text-align:left;cursor:pointer;
+  background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:12px 14px;color:var(--ink);
+  font:inherit;box-shadow:var(--shadow);transition:border-color .15s,transform .15s}
+.card:hover{border-color:var(--primary)}
+.card .ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--primary-soft);color:var(--primary)}
+.card:nth-child(3n+2) .ic{background:var(--sun-soft);color:#9A6508}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .card:nth-child(3n+2) .ic{color:var(--sun)}}
+:root[data-theme="dark"] .card:nth-child(3n+2) .ic{color:var(--sun)}
+.card b{display:block;font-family:var(--display);font-weight:800;font-size:1.02em;line-height:1.25}
+.card span{font-size:.85em;color:var(--muted);line-height:1.35;display:block}
+
+/* conversación */
+.log{flex:1;display:flex;flex-direction:column;gap:14px;padding-block:18px}
+.row-msg{display:flex;gap:10px;align-items:flex-start;min-width:0}
+.row-msg.me{justify-content:flex-end}
+.msg{max-width:86%;padding:13px 16px;border-radius:18px;min-width:0;overflow-wrap:anywhere}
+.bot .msg{background:var(--surface);border:1px solid var(--line);border-top-left-radius:6px;box-shadow:var(--shadow)}
+.me .msg{background:var(--primary);color:var(--primary-ink);border-top-right-radius:6px;white-space:pre-wrap}
+.msg p{margin:0 0 .6em}.msg p:last-child{margin:0}
+.msg ul,.msg ol{margin:.2em 0 .6em;padding-left:1.3em}
+.msg li{margin-bottom:.2em}
+.msg strong{color:inherit}
+.alertmsg .msg{background:var(--urgent-soft);border:2px solid var(--urgent)}
+.alertmsg .msg strong{color:var(--urgent)}
+.fine{font-size:.8em;color:var(--muted)}
+.dots{display:inline-flex;gap:5px;align-items:center;padding:4px 0}
+.dots i{width:8px;height:8px;border-radius:50%;background:var(--primary);opacity:.35}
+@media (prefers-reduced-motion:no-preference){
+  .dots i{animation:b 1.2s infinite}.dots i:nth-child(2){animation-delay:.2s}.dots i:nth-child(3){animation-delay:.4s}
+  @keyframes b{0%,60%,100%{opacity:.3;transform:none}30%{opacity:1;transform:translateY(-3px)}}
+  .row-msg{animation:in .2s ease-out}@keyframes in{from{transform:translateY(6px)}to{transform:none}}
+  .card:hover{transform:translateY(-2px)}
+}
+
+/* información */
+details.info{background:var(--surface);border:1.5px solid var(--line);border-radius:16px;margin-block:8px;box-shadow:var(--shadow)}
+details.info summary{cursor:pointer;padding:14px 16px;font:800 17px var(--display);list-style:none;display:flex;justify-content:space-between;gap:10px}
+details.info summary::-webkit-details-marker{display:none}
+details.info summary::after{content:"Ver";font:700 14px var(--body);color:var(--primary)}
+details.info[open] summary::after{content:"Cerrar"}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;padding:0 16px 16px}
+.place{background:var(--bg);border-radius:12px;padding:12px 14px}
+.place h3{font-family:var(--display);font-size:16px;font-weight:800;margin:0 0 4px}
+.place p{margin:0;font-size:.88em;color:var(--muted)}
+.place p b{color:var(--ink)}
+.place a{color:var(--primary);font-weight:700}
+.copy{font:700 13px var(--body);border:1.5px solid var(--line);background:var(--surface);color:var(--primary);border-radius:8px;padding:2px 8px;cursor:pointer;margin-left:4px}
+
+/* urgencia */
+.sos-panel{background:var(--urgent-soft);border:2px solid var(--urgent);border-radius:16px;padding:14px 16px;margin-block:10px}
+.sos-panel h2{font-family:var(--display);font-weight:900;font-size:20px;margin:0 0 4px;color:var(--urgent)}
+.sos-panel p{margin:0 0 4px;font-size:.92em}
+.sos-panel .big{font:900 34px/1 var(--display);color:var(--urgent);letter-spacing:.02em}
+
+/* entrada */
+form{position:sticky;bottom:0;background:linear-gradient(to bottom,transparent,var(--bg) 18px);padding-block:22px calc(12px + env(safe-area-inset-bottom,0px));display:grid;gap:6px}
+.input{display:flex;gap:8px;align-items:flex-end;background:var(--surface);border:2px solid var(--line);border-radius:22px;padding:6px 6px 6px 16px;box-shadow:var(--shadow)}
+.input:focus-within{border-color:var(--primary)}
+textarea{flex:1;min-width:0;font:inherit;color:var(--ink);background:transparent;border:0;resize:none;min-height:44px;max-height:160px;padding:9px 0;outline:none}
+.send{font:800 16px var(--display);background:var(--primary);color:var(--primary-ink);border:0;border-radius:16px;padding:0 18px;height:46px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.send.stop{background:var(--muted)}
+.fine-foot{font-size:13px;color:var(--muted);margin:0;text-align:center}
+button:focus-visible,summary:focus-visible,a:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+@media (max-width:430px){.brand small{display:none}.sizer button{min-width:32px;padding:6px 7px}.hello{grid-template-columns:1fr}.hello .avatar{display:none}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="av" viewBox="0 0 64 64">
+    <circle cx="32" cy="32" r="31" fill="var(--primary-soft)"/>
+    <path d="M6 40c6-4 11-4 17 0s11 4 17 0 11-4 18 0v6a30 30 0 0 1-52 0z" fill="var(--primary)" opacity=".85"/>
+    <circle cx="44" cy="19" r="7" fill="var(--sun)"/>
+    <rect x="18" y="17" width="16" height="16" rx="4" fill="var(--surface)"/>
+    <path d="M26 20.5v9M21.5 25h9" stroke="var(--primary)" stroke-width="3" stroke-linecap="round"/>
+  </symbol>
+</svg>
+
+<div class="wrap">
+  <div class="top">
+    <div class="brand">
+      <svg class="avatar sm" aria-hidden="true"><use href="#av"/></svg>
+      <div><b>Botiquín Tongoy</b><small>Tongoy · Guanaqueros · Puerto Aldea</small></div>
+    </div>
+    <div class="sizer" role="group" aria-label="Tamaño de letra">
+      <button type="button" data-fs="17px" aria-pressed="false" aria-label="Letra normal">A</button>
+      <button type="button" data-fs="20px" aria-pressed="false" aria-label="Letra grande">A+</button>
+      <button type="button" data-fs="23px" aria-pressed="false" aria-label="Letra muy grande">A++</button>
+    </div>
+    <button class="sos-btn" type="button" id="sosBtn">131</button>
+  </div>
+
+  <section class="hello">
+    <svg class="avatar" aria-hidden="true"><use href="#av"/></svg>
+    <div>
+      <h1 id="greet">Hola, estoy aquí para ayudarte</h1>
+      <p>Cuéntame tu duda sobre medicamentos con tus propias palabras. Te oriento con calma y te digo cuándo conviene hablar con el Botiquín o con tu equipo de salud.</p>
+    </div>
+  </section>
+
+  <div class="sos-panel" id="sosPanel" hidden>
+    <h2>¿Es una urgencia?</h2>
+    <p>Si alguien tiene dificultad para respirar, se desmayó, convulsiona, está muy confundido, tiene la cara o los labios hinchados, o tomó medicamentos de más:</p>
+    <p>Llama al <span class="big">131</span> (SAMU) o ve a urgencia ahora.</p>
+    <p class="fine">Urgencia 24 horas: Hospital San Pablo de Coquimbo, Av. Pedro Nolasco Videla s/n.</p>
+  </div>
+
+  <section class="where">
+    <h2>¿Dónde te atiendes?</h2>
+    <div class="places" role="group" aria-label="Lugar de atención">
+      <button type="button" data-place="CESFAM Tongoy" aria-pressed="false">Tongoy</button>
+      <button type="button" data-place="Posta Rural Guanaqueros" aria-pressed="false">Guanaqueros</button>
+      <button type="button" data-place="Estación Médico Rural Puerto Aldea" aria-pressed="false">Puerto Aldea</button>
+      <button type="button" data-place="sin definir" aria-pressed="true">Otro o no sé</button>
+    </div>
+  </section>
+
+  <section class="topics" id="topics">
+    <h2>¿Sobre qué quieres conversar?</h2>
+    <div class="cards">
+      <button class="card" type="button" data-q="Se me olvidó tomar una dosis de mi medicamento, ¿qué hago?">
+        <span class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg></span>
+        <span><b>Olvidé una dosis</b><span>Qué hacer sin arriesgarte</span></span></button>
+      <button class="card" type="button" data-q="Tomo varios medicamentos a la vez y me gustaría saber si están bien juntos.">
+        <span class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="7" width="18" height="12" rx="3"/><path d="M8 7V5h8v2M9 13h6M12 10v6"/></svg></span>
+        <span><b>Varios medicamentos</b><span>Mezclas, mareos, dudas</span></span></button>
+      <button class="card" type="button" data-q="Tengo dudas sobre cómo usar y guardar mi insulina.">
+        <span class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 3l3 3M16 5l3 3-9 9H7v-3zM5 19l2-2"/></svg></span>
+        <span><b>Insulina y diabetes</b><span>Uso, guardado, bajas de azúcar</span></span></button>
+      <button class="card" type="button" data-q="Tengo preguntas sobre mi medicamento para la presión (losartán).">
+        <span class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/><path d="M8 12h2l1-2 2 4 1-2h2"/></svg></span>
+        <span><b>Presión arterial</b><span>Losartán y otros</span></span></button>
+      <button class="card" type="button" data-q="Uso pastillas para dormir o para los nervios (como clonazepam) y tengo dudas.">
+        <span class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></span>
+        <span><b>Dormir o nervios</b><span>Clonazepam, diazepam y otros</span></span></button>
+      <button class="card" type="button" data-q="¿Cuáles son los horarios del Botiquín y cómo retiro mis medicamentos?">
+        <span class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></span>
+        <span><b>Horarios y retiro</b><span>Cuándo y dónde ir</span></span></button>
+    </div>
+  </section>
+
+  <details class="info" id="info">
+    <summary>Horarios, direcciones y contacto del Botiquín</summary>
+    <div class="grid">
+      <div class="place"><h3>Botiquín CESFAM Tongoy</h3>
+        <p>Fundición Norte #127<br><b>Lunes a viernes</b> 8:00 a 20:00<br><b>Sábado</b> 9:00 a 13:00<br>
+        <a href="https://maps.app.goo.gl/AMaWUr8fh4CzV5qAA" target="_blank" rel="noopener">Cómo llegar</a></p></div>
+      <div class="place"><h3>Posta Rural Guanaqueros</h3>
+        <p>Av. Fritz Willy Linderman 4850<br><b>Lunes a jueves</b> 8:00 a 17:00<br><b>Viernes</b> 8:00 a 16:00<br>
+        <a href="https://maps.app.goo.gl/ddAWFuJCg4B3xLMNA" target="_blank" rel="noopener">Cómo llegar</a></p></div>
+      <div class="place"><h3>Puerto Aldea</h3>
+        <p>Estación Médico Rural. Para días de atención y entrega de medicamentos, consulta en Botiquín CESFAM Tongoy.</p></div>
+      <div class="place"><h3>Habla con el Botiquín</h3>
+        <p><b>Teléfono</b> <span>+56 9 6341 0577</span><button class="copy" type="button" data-copy="+56963410577">Copiar</button><br>
+        Lunes a viernes, 15:00 a 17:00<br>
+        <b>Correo</b> <span>botiquincesfamtongoy@gmail.com</span><button class="copy" type="button" data-copy="botiquincesfamtongoy@gmail.com">Copiar</button></p></div>
+    </div>
+  </details>
+
+  <main class="log" id="log" aria-live="polite"></main>
+
+  <form id="f" autocomplete="off">
+    <div class="input">
+      <textarea id="q" rows="1" placeholder="Escribe aquí tu pregunta…" aria-label="Tu pregunta"></textarea>
+      <button class="send" id="send" type="submit">Enviar</button>
+    </div>
+    <p class="fine-foot" id="note">Esta página no guarda tu conversación. Tus mensajes se procesan con un servicio de inteligencia artificial: no escribas tu RUT, dirección ni datos personales.</p>
+  </form>
+</div>
+
+<script>
+
+// ▼ PASO 3: pega aquí la dirección de tu Worker de Cloudflare
+const API_URL = 'https://botiquin-tongoy.ismaelvasquezl.workers.dev';
+
+const WELCOME = "¡Hola! Qué bueno que escribes. Soy el asistente del Botiquín para Tongoy, Guanaqueros, Puerto Aldea y sus alrededores.\n\nPuedo ayudarte a entender tus medicamentos, qué hacer si olvidaste una dosis o cómo organizar varios tratamientos. No cambio dosis ni doy recetas: para eso te acompaño a encontrar al profesional indicado.\n\n¿En qué te puedo ayudar hoy?";
+
+const URGENT = /(no respira|le cuesta respirar|dificultad para respirar|ahog|convuls|inconscien|no despierta|desmay|se desvaneci|intoxic|sobredosis|se tom[oó] (toda|todo|muchas|muchos|el frasco|la caja)|tom[eé] (muchas|demasiad)|hinchaz[oó]n de (la )?(cara|labios|lengua|garganta)|labios hinchados|dolor (de|en el) pecho|no puede tragar|muy confundid|ni[ñn][oa] .*(se tom|trag|comi)|respira lento)/i;
+
+const $ = id => document.getElementById(id);
+const log = $('log'), f = $('f'), q = $('q'), sendBtn = $('send'), note = $('note'), topics = $('topics'), sosPanel = $('sosPanel');
+let place = 'sin definir', turns = [], ctl = null, busy = false, disabled = false;
+
+// saludo según la hora
+(() => { const h = new Date().getHours();
+  $('greet').textContent = (h < 12 ? 'Buenos días' : h < 20 ? 'Buenas tardes' : 'Buenas noches') + ', estoy aquí para ayudarte'; })();
+
+// tamaño de letra (preferencia de este dispositivo)
+function setFs(v){ document.documentElement.style.setProperty('--fs', v);
+  document.querySelectorAll('.sizer button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.fs === v)));
+  try{ localStorage.setItem('fs', v); }catch{} }
+let savedFs = '17px'; try{ savedFs = localStorage.getItem('fs') || '17px'; }catch{}
+setFs(savedFs);
+document.querySelectorAll('.sizer button').forEach(b => b.addEventListener('click', () => setFs(b.dataset.fs)));
+
+$('sosBtn').addEventListener('click', () => { sosPanel.hidden = !sosPanel.hidden; if (!sosPanel.hidden) sosPanel.scrollIntoView({block:'center', behavior:'smooth'}); });
+
+function esc(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function md(src){
+  const lines = esc(src.trim()).split('\n'); let html = '', list = null, para = [];
+  const inline = t => t.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  const flushP = () => { if (para.length){ html += '<p>'+inline(para.join(' '))+'</p>'; para = []; } };
+  const flushL = () => { if (list){ html += '</'+list+'>'; list = null; } };
+  for (const raw of lines){
+    const l = raw.trim(); let m;
+    if (!l){ flushP(); flushL(); continue; }
+    if ((m = l.match(/^[-*•]\s+(.*)/))){ flushP(); if (list!=='ul'){ flushL(); html+='<ul>'; list='ul'; } html+='<li>'+inline(m[1])+'</li>'; continue; }
+    if ((m = l.match(/^\d+[.)]\s+(.*)/))){ flushP(); if (list!=='ol'){ flushL(); html+='<ol>'; list='ol'; } html+='<li>'+inline(m[1])+'</li>'; continue; }
+    flushL(); para.push(l.replace(/^#+\s*/,''));
+  }
+  flushP(); flushL(); return html;
+}
+function bubble(who, content, isHtml, extra){
+  const row = document.createElement('div'); row.className = 'row-msg ' + who + (extra ? ' ' + extra : '');
+  if (who === 'bot') row.innerHTML = '<svg class="avatar sm" aria-hidden="true"><use href="#av"/></svg>';
+  const d = document.createElement('div'); d.className = 'msg';
+  if (isHtml) d.innerHTML = content; else d.textContent = content;
+  row.appendChild(d); log.appendChild(row); row.scrollIntoView({block:'end', behavior:'smooth'}); return d;
+}
+const URGENT_HTML = '<p><strong>Esto puede ser una urgencia.</strong> Llama ahora al <strong>131</strong> o ve de inmediato a la urgencia más cercana (Hospital San Pablo de Coquimbo, abierto 24 horas). Acompaña a la persona y no la dejes sola.</p><p>Si está inconsciente, convulsiona, está muy confundida o no puede tragar, no le des líquidos, alimentos ni medicamentos por boca, y no le provoques el vómito.</p>';
+const OFFLINE = '<p>En este momento no puedo responder desde aquí, pero el equipo del Botiquín sí puede ayudarte:</p><ul><li>Teléfono <strong>+56 9 6341 0577</strong>, lunes a viernes de 15:00 a 17:00</li><li>Correo <strong>botiquincesfamtongoy@gmail.com</strong></li></ul><p>Si alguien tiene dificultad para respirar, se desmaya, convulsiona o tiene la cara hinchada, llama al 131.</p>';
+const THINK = '<span class="dots" aria-label="Escribiendo"><i></i><i></i><i></i></span>';
+
+bubble('bot', md(WELCOME), true);
+
+function errCopy(code){
+    if (code === 'rate_limited') return 'Estoy recibiendo muchas consultas. Espera un momento y vuelve a enviar tu pregunta.';
+  if (code === 'session_expired') return 'Tu sesión terminó. Vuelve a ingresar y envía tu pregunta de nuevo.';
+  if (code === 'prompt_too_large') return 'La conversación ya es muy larga. Recarga la página para empezar una nueva.';
+  return 'No alcancé a terminar la respuesta. Envía tu pregunta otra vez en un momento.';
+}
+function setBusy(b){ busy = b; sendBtn.textContent = b ? 'Detener' : 'Enviar'; sendBtn.classList.toggle('stop', b); }
+
+async function streamAnswer(onText, signal){
+  const res = await fetch(API_URL, {
+    method:'POST', headers:{'Content-Type':'application/json'}, signal,
+    body: JSON.stringify({ place, messages: turns.slice(-12) })
+  });
+  if (res.status === 429) throw {code:'rate_limited'};
+  if (!res.ok || !res.body) throw {code:'upstream_error'};
+  const reader = res.body.getReader(), dec = new TextDecoder();
+  let buf = '', text = '';
+  for (;;){
+    const { value, done } = await reader.read(); if (done) break;
+    buf += dec.decode(value, {stream:true});
+    let i;
+    while ((i = buf.indexOf('\n\n')) >= 0){
+      const chunk = buf.slice(0, i); buf = buf.slice(i + 2);
+      for (const line of chunk.split('\n')){
+        if (!line.startsWith('data:')) continue;
+        let ev; try{ ev = JSON.parse(line.slice(5)); }catch{ continue; }
+        if (ev.type === 'content_block_delta' && ev.delta && ev.delta.type === 'text_delta'){ text += ev.delta.text; onText(text); }
+        else if (ev.type === 'error') throw {code: ev.error && ev.error.type === 'overloaded_error' ? 'rate_limited' : 'upstream_error', text};
+      }
+    }
+  }
+  if (!text.trim()) throw {code:'upstream_error'};
+  return text;
+}
+
+async function ask(text){
+  text = text.trim(); if (!text || busy) return;
+  topics.hidden = true;
+  bubble('me', text);
+  const urgent = URGENT.test(text);
+  if (urgent) bubble('bot', URGENT_HTML, true, 'alertmsg');
+  if (disabled){ if (!urgent) bubble('bot', OFFLINE, true); return; }
+  turns.push({role:'user', content: text});
+  const out = bubble('bot', THINK, true);
+  ctl = new AbortController(); setBusy(true);
+  try{
+    const ans = await streamAnswer(t => { out.innerHTML = md(t); }, ctl.signal);
+    out.innerHTML = md(ans);
+    turns.push({role:'assistant', content: ans});
+  }catch(e){
+    turns.pop();
+    const keep = e && e.text ? md(e.text) : '';
+    if (e && (e.name === 'AbortError' || e.code === 'cancelled')) out.innerHTML = keep || '<p class="fine">Detuviste la respuesta.</p>';
+    else out.innerHTML = keep + '<p class="fine">' + esc(errCopy(e && e.code)) + '</p>';
+  }finally{ setBusy(false); ctl = null; }
+}
+
+f.addEventListener('submit', e => {
+  e.preventDefault();
+  if (busy){ ctl && ctl.abort(); return; }
+  const t = q.value; q.value = ''; q.style.height = ''; ask(t);
+});
+q.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); f.requestSubmit(); } });
+q.addEventListener('input', () => { q.style.height = 'auto'; q.style.height = Math.min(q.scrollHeight,160) + 'px'; });
+document.querySelectorAll('.card').forEach(b => b.addEventListener('click', () => ask(b.dataset.q)));
+document.querySelectorAll('.places button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.places button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  place = b.dataset.place;
+}));
+document.querySelectorAll('.copy').forEach(b => b.addEventListener('click', async () => {
+  try{ await navigator.clipboard.writeText(b.dataset.copy); b.textContent = 'Copiado'; }
+  catch{ const s = window.getSelection(), r = document.createRange(); r.selectNodeContents(b.previousElementSibling); s.removeAllRanges(); s.addRange(r); b.textContent = 'Seleccionado'; }
+  setTimeout(() => b.textContent = 'Copiar', 1800);
+}));
+
+if (API_URL.includes('TU-WORKER')){ disabled = true; note.textContent = 'El asistente aún no está conectado. El Botiquín puede ayudarte por teléfono o correo.'; }
+</script>
+
+</body>
+</html>
